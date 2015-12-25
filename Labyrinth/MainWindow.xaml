@@ -9,6 +9,13 @@
         Width="640"
         Height="480">
     <Grid>
-
+        <Rectangle
+            Fill="#FFF4F4F5"
+            HorizontalAlignment="Left"
+            Height="110"
+            Margin="159,153,0,0"
+            Stroke="Black"
+            VerticalAlignment="Top"
+            Width="325" />
     </Grid>
 </Window>
