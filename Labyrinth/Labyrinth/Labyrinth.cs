@@ -1,10 +1,10 @@
 ﻿using System;
 using Labyrinth.Labyrinth;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Labyrinth.MazeGenerator
 {
-    
+
     class Labyrinth
     {
         public delegate int GameEndedDelegate();
@@ -43,17 +43,17 @@ namespace Labyrinth.MazeGenerator
                 }
             }
         }
-        /*
+        
         public void initializeGame()
         {
             gameInProgress = true;
-            ArrayList<Coordinate> pts = findDiametr();
-            getCell(pts.get(0).x, pts.get(0).y).content = CellContent.PLAYER;
-            playerCoordinate = pts.get(0);
+            Tuple<Coordinate, Coordinate> pts = findDiametr();
+            getCell(pts.Item1).content = Cell.CellContent.PLAYER;
+            playerCoordinate = pts.Item1;
 
-            getCell(pts.get(1).x, pts.get(1).y).content = CellContent.GOAL;
+            getCell(pts.Item2).content = Cell.CellContent.GOAL;
         }
-        */
+        
         public void movePlayer(Coordinate.Direction dir)
         {
             if (gameInProgress)
@@ -139,71 +139,81 @@ namespace Labyrinth.MazeGenerator
             return checkWall(coord.X, coord.Y, dir);
         }
 
-        public Coordinate farestCell(Coordinate begin){
-        int [,] length = new int[this.size, this.size];
-        int inf = this.size * this.size + 1;
-        for(int i = 0; i < this.size; i++){
-            for(int j = 0; j < this.size; j++){
-                length[i, j] = inf;
-            }
-        }
-        length[begin.X, begin.Y] = 0;
-        
-        Queue<Coordinate> cells = new Queue<Coordinate>();
-        int maxPath = 0;
-        Coordinate farestPoint = begin;
-        
-        cells.add(begin);
-        while(!cells.isEmpty()){
-            Coordinate curCoord = cells.poll();
-            int x = curCoord.x;
-            int y = curCoord.y;
-            int curLength = length[x][y];
-            if(curLength > maxPath){
-                farestPoint =  curCoord;
-                maxPath = curLength;
-            }
-            if(!checkWall(curCoord, Coordinate.Direction.UP)){
-                if(length[x][y - 1] > curLength + 1){
-                    cells.add(new Coordinate(curCoord, Coordinate.Direction.UP));
-                    length[x][y - 1] = curLength + 1;
+        public Coordinate farestCell(Coordinate begin)
+        {
+            int[,] length = new int[this.size, this.size];
+            int inf = this.size * this.size + 1;
+            for (int i = 0; i < this.size; i++)
+            {
+                for (int j = 0; j < this.size; j++)
+                {
+                    length[i, j] = inf;
                 }
             }
-            
-            if(!checkWall(curCoord, Coordinate.Direction.RIGHT)){
-                if(length[x + 1][y] > curLength + 1){
-                    cells.add(new Coordinate(curCoord, Coordinate.Direction.RIGHT));
-                    length[x + 1][y] = curLength + 1;
-                }
-            }
-            
-            if(!checkWall(curCoord, Coordinate.Direction.DOWN)){
-                if(length[x][y + 1] > curLength + 1){
-                    cells.add(new Coordinate(curCoord, Coordinate.Direction.DOWN));
-                    length[x][y + 1] = curLength + 1;
-                }
-            }
-            
-            if(!checkWall(curCoord, Coordinate.Direction.LEFT)){
-                if(length[x - 1][y] > curLength + 1){
-                    cells.add(new Coordinate(curCoord, Coordinate.Direction.LEFT));
-                    length[x - 1][y] = curLength + 1;
-                }
-            }
-        }
-        
-        return farestPoint;
-    }
+            length[begin.X, begin.Y] = 0;
 
-        public ArrayList<Coordinate> findDiametr(){
-        ArrayList<Coordinate> res = new ArrayList<>();
-        Coordinate diamCell1 = farestCell(new Coordinate(0, 0));
-        Coordinate diamCell2 = farestCell(diamCell1);
-        res.add(diamCell1);
-        res.add(diamCell2);
-        return res;
-    }
-        
+            Queue<Coordinate> cells = new Queue<Coordinate>();
+            int maxPath = 0;
+            Coordinate farestPoint = begin;
 
+            cells.Enqueue(begin);
+            while (cells.Count != 0)
+            {
+                Coordinate curCoord = cells.Dequeue();
+                int x = curCoord.X;
+                int y = curCoord.Y;
+                int curLength = length[x, y];
+                if (curLength > maxPath)
+                {
+                    farestPoint = curCoord;
+                    maxPath = curLength;
+                }
+                if (!checkWall(curCoord, Coordinate.Direction.UP))
+                {
+                    if (length[x, y - 1] > curLength + 1)
+                    {
+                        cells.Enqueue(new Coordinate(curCoord, Coordinate.Direction.UP));
+                        length[x, y - 1] = curLength + 1;
+                    }
+                }
+
+                if (!checkWall(curCoord, Coordinate.Direction.RIGHT))
+                {
+                    if (length[x + 1, y] > curLength + 1)
+                    {
+                        cells.Enqueue(new Coordinate(curCoord, Coordinate.Direction.RIGHT));
+                        length[x + 1, y] = curLength + 1;
+                    }
+                }
+
+                if (!checkWall(curCoord, Coordinate.Direction.DOWN))
+                {
+                    if (length[x, y + 1] > curLength + 1)
+                    {
+                        cells.Enqueue(new Coordinate(curCoord, Coordinate.Direction.DOWN));
+                        length[x, y + 1] = curLength + 1;
+                    }
+                }
+
+                if (!checkWall(curCoord, Coordinate.Direction.LEFT))
+                {
+                    if (length[x - 1, y] > curLength + 1)
+                    {
+                        cells.Enqueue(new Coordinate(curCoord, Coordinate.Direction.LEFT));
+                        length[x - 1, y] = curLength + 1;
+                    }
+                }
+            }
+
+            return farestPoint;
+        }
+
+        public Tuple<Coordinate, Coordinate> findDiametr()
+        {
+            Coordinate diamCell1 = farestCell(new Coordinate(0, 0));
+            Coordinate diamCell2 = farestCell(diamCell1);
+            Tuple<Coordinate, Coordinate> res = new Tuple<Coordinate, Coordinate>(diamCell1, diamCell2);
+            return res;
+        }
     }
 }
